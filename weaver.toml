@@ -1,0 +1,8 @@
+[serviceweaver]
+binary = "./bin/microservices"
+
+[single]
+listeners.api = { address = "localhost:12345" }
+
+[multi]
+listeners.api = { address = "localhost:12345" }
