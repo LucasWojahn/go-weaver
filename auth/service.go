@@ -26,7 +26,7 @@ func (s *auth) Health(ctx context.Context) (string, error) {
 
 func (s *auth) ValidateUser(ctx context.Context, email, password string) error {
 	//@TODO create validation rules, using databases or something else
-	if email == "eminetto@gmail.com" && password != "1234567" {
+	if email == "lucas@gmail.com" && password != "1234567" {
 		return fmt.Errorf("Invalid user")
 	}
 	return nil
