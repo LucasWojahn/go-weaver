@@ -17,14 +17,14 @@ import (
 
 func init() {
 	codegen.Register(codegen.Registration{
-		Name:  "github.com/eminetto/microservices-serviceweaver/vote/Writer",
+		Name:  "github.com/LucasWojahn/go-weaver/vote/Writer",
 		Iface: reflect.TypeOf((*Writer)(nil)).Elem(),
 		Impl:  reflect.TypeOf(writer{}),
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
-			return writer_local_stub{impl: impl.(Writer), tracer: tracer, writeMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/vote/Writer", Method: "Write", Remote: false, Generated: true})}
+			return writer_local_stub{impl: impl.(Writer), tracer: tracer, writeMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/vote/Writer", Method: "Write", Remote: false, Generated: true})}
 		},
 		ClientStubFn: func(stub codegen.Stub, caller string) any {
-			return writer_client_stub{stub: stub, writeMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/vote/Writer", Method: "Write", Remote: true, Generated: true})}
+			return writer_client_stub{stub: stub, writeMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/vote/Writer", Method: "Write", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
 			return writer_server_stub{impl: impl.(Writer), addLoad: addLoad}
@@ -114,7 +114,7 @@ func (s writer_client_stub) Write(ctx context.Context, a0 *Vote) (r0 uuid.UUID, 
 
 	// Encode arguments.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_ptr_Vote_dfbd89aa(enc, a0)
+	serviceweaver_enc_ptr_Vote_badf8238(enc, a0)
 	var shardKey uint64
 
 	// Call the remote method.
@@ -139,7 +139,7 @@ func (s writer_client_stub) Write(ctx context.Context, a0 *Vote) (r0 uuid.UUID, 
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.24.2 (codegen
+ERROR: You generated this file with 'weaver generate' (devel) (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/ServiceWeaver/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -188,7 +188,7 @@ func (s writer_server_stub) write(ctx context.Context, args []byte) (res []byte,
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
 	var a0 *Vote
-	a0 = serviceweaver_dec_ptr_Vote_dfbd89aa(dec)
+	a0 = serviceweaver_dec_ptr_Vote_badf8238(dec)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -252,7 +252,7 @@ func (x *Vote) WeaverUnmarshal(dec *codegen.Decoder) {
 
 // Encoding/decoding implementations.
 
-func serviceweaver_enc_ptr_Vote_dfbd89aa(enc *codegen.Encoder, arg *Vote) {
+func serviceweaver_enc_ptr_Vote_badf8238(enc *codegen.Encoder, arg *Vote) {
 	if arg == nil {
 		enc.Bool(false)
 	} else {
@@ -261,7 +261,7 @@ func serviceweaver_enc_ptr_Vote_dfbd89aa(enc *codegen.Encoder, arg *Vote) {
 	}
 }
 
-func serviceweaver_dec_ptr_Vote_dfbd89aa(dec *codegen.Decoder) *Vote {
+func serviceweaver_dec_ptr_Vote_badf8238(dec *codegen.Decoder) *Vote {
 	if !dec.Bool() {
 		return nil
 	}

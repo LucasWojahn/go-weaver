@@ -1,33 +1,36 @@
 package vote
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
-func WriterHandler(vw Writer) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var v Vote
-		err := json.NewDecoder(r.Body).Decode(&v)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			return
-		}
-		v.Email = r.Context().Value("email").(string)
-		var result struct {
-			ID uuid.UUID `json:"id"`
-		}
-		result.ID, err = vw.Write(r.Context(), &v)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		if err := json.NewEncoder(w).Encode(result); err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			return
-		}
-		return
-	})
+func WriterHandler(vw Writer) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        var v Vote
+        if err := c.Bind(&v); err != nil {
+            return echo.NewHTTPError(http.StatusBadRequest, "Invalid vote data")
+        }
+
+        // Get email from context (assuming middleware sets it)
+        email, ok := c.Get("email").(string)
+        if !ok {
+            return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+        }
+        v.Email = email
+
+        var result struct {
+            ID uuid.UUID `json:"id"`
+        }
+        var err error
+
+        result.ID, err = vw.Write(c.Request().Context(), &v)
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to write vote")
+        }
+
+        return c.JSON(http.StatusCreated, result)
+    }
 }
