@@ -6,12 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/LucasWojahn/go-weaver/auth"
+	"github.com/LucasWojahn/go-weaver/feedback"
+	"github.com/LucasWojahn/go-weaver/vote"
 	"github.com/ServiceWeaver/weaver"
-	"github.com/eminetto/microservices-serviceweaver/auth"
-	"github.com/eminetto/microservices-serviceweaver/feedback"
-	"github.com/eminetto/microservices-serviceweaver/vote"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -20,8 +20,6 @@ func main() {
 	}
 }
 
-// app is the main component of the application. weaver.Run creates
-// it and passes it to serve.
 type app struct {
 	weaver.Implements[weaver.Main]
 	feedback weaver.Ref[feedback.Writer]
@@ -30,35 +28,50 @@ type app struct {
 	api      weaver.Listener
 }
 
-// serve is called by weaver.Run and contains the body of the application.
 func serve(ctx context.Context, app *app) error {
-	var fdb feedback.Writer = app.feedback.Get()
-	var vt vote.Writer = app.vote.Get()
-	var us auth.Auth = app.auth.Get()
+	fdb := app.feedback.Get()
+	vt := app.vote.Get()
+	us := app.auth.Get()
 
-	authMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			email, err := us.ValidateToken(r.Context(), r.Header.Get("Authorization"))
+	e := echo.New()
+	e.Use(middleware.Logger())
+
+	e.GET("/health", auth.HealthHandler(us))
+	e.POST("/auth", auth.Handler(us))
+
+	// Auth Middleware for Echo
+	authMiddleware := func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			email, err := us.ValidateToken(c.Request().Context(), c.Request().Header.Get("Authorization"))
 			if err != nil {
-				w.WriteHeader(http.StatusForbidden)
-				return
+				return c.NoContent(http.StatusForbidden) // Use echo's NoContent for error handling
 			}
-			ctx := context.WithValue(r.Context(), "email", email)
-			next.ServeHTTP(w, r.WithContext(ctx))
-		})
+			c.Set("email", email) // Set the email in the Echo context
+			return next(c)
+		}
 	}
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/health", auth.HealthHandler(us))
-	r.Post("/auth", auth.Handler(us))
-	r.Route("/", func(r chi.Router) {
-		r.Use(authMiddleware)
-		r.Post("/feedback", feedback.WriteHandler(fdb))
-		r.Post("/vote", vote.WriterHandler(vt))
-	})
-	fmt.Printf("listener available on %v\n", app.api)
+	feedbackHandler := feedback.WriteHandler(fdb)
+	voteHandler := vote.WriterHandler(vt)
 
-	http.Serve(app.api, r)
+	// Feedback Group
+	// feedbackGroup := e.Group("/feedback")
+	// feedbackGroup.Use(authMiddleware)
+	e.POST("/feedback", feedbackHandler, authMiddleware)
+
+	// Vote Group
+	// voteGroup := e.Group("/vote")
+	// voteGroup.Use(authMiddleware)
+	e.POST("/vote", voteHandler, authMiddleware)
+
+	fmt.Printf("Listener available on %v\n", app.api)
+
+	err := http.Serve(app.api, e.Server.Handler)
+
+	if err != nil {
+		fmt.Println("Error serving http server: ", err)
+		return err
+	}
+
 	return nil
 }

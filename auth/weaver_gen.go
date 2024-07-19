@@ -15,14 +15,14 @@ import (
 
 func init() {
 	codegen.Register(codegen.Registration{
-		Name:  "github.com/eminetto/microservices-serviceweaver/auth/Auth",
+		Name:  "github.com/LucasWojahn/go-weaver/auth/Auth",
 		Iface: reflect.TypeOf((*Auth)(nil)).Elem(),
 		Impl:  reflect.TypeOf(auth{}),
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
-			return auth_local_stub{impl: impl.(Auth), tracer: tracer, generateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "GenerateToken", Remote: false, Generated: true}), healthMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "Health", Remote: false, Generated: true}), validateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "ValidateToken", Remote: false, Generated: true}), validateUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "ValidateUser", Remote: false, Generated: true})}
+			return auth_local_stub{impl: impl.(Auth), tracer: tracer, generateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "GenerateToken", Remote: false, Generated: true}), healthMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "Health", Remote: false, Generated: true}), validateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "ValidateToken", Remote: false, Generated: true}), validateUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "ValidateUser", Remote: false, Generated: true})}
 		},
 		ClientStubFn: func(stub codegen.Stub, caller string) any {
-			return auth_client_stub{stub: stub, generateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "GenerateToken", Remote: true, Generated: true}), healthMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "Health", Remote: true, Generated: true}), validateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "ValidateToken", Remote: true, Generated: true}), validateUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eminetto/microservices-serviceweaver/auth/Auth", Method: "ValidateUser", Remote: true, Generated: true})}
+			return auth_client_stub{stub: stub, generateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "GenerateToken", Remote: true, Generated: true}), healthMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "Health", Remote: true, Generated: true}), validateTokenMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "ValidateToken", Remote: true, Generated: true}), validateUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/LucasWojahn/go-weaver/auth/Auth", Method: "ValidateUser", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
 			return auth_server_stub{impl: impl.(Auth), addLoad: addLoad}
@@ -368,7 +368,7 @@ func (s auth_client_stub) ValidateUser(ctx context.Context, a0 string, a1 string
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.24.2 (codegen
+ERROR: You generated this file with 'weaver generate' (devel) (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/ServiceWeaver/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.

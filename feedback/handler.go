@@ -1,35 +1,39 @@
 package feedback
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
 // WriteHandler handle the write feedback request
-func WriteHandler(fw Writer) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func WriteHandler(fw Writer) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		var f Feedback
-		err := json.NewDecoder(r.Body).Decode(&f)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			return
+		if err := c.Bind(&f); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid feedback data")
 		}
 
-		f.Email = r.Context().Value("email").(string)
+		// Get email from context (assuming middleware sets it)
+		email, ok := c.Get("email").(string)
+		if !ok {
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+		}
+		f.Email = email
+
 		var result struct {
 			ID uuid.UUID `json:"id"`
 		}
-		result.ID, err = fw.Write(r.Context(), &f)
+
+		var err error
+
+		result.ID, err = fw.Write(c.Request().Context(), &f)
+
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to write feedback")
 		}
-		if err := json.NewEncoder(w).Encode(result); err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			return
-		}
-		return
-	})
+
+		return c.JSON(http.StatusCreated, result)
+	}
 }

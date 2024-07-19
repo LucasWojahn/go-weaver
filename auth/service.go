@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/LucasWojahn/go-weaver/auth/security"
 	"github.com/ServiceWeaver/weaver"
-	"github.com/eminetto/microservices-serviceweaver/auth/security"
 )
 
 // Auth is the interface that provides auth methods.
