@@ -65,13 +65,7 @@ func serve(ctx context.Context, app *app) error {
 	e.POST("/vote", voteHandler, authMiddleware)
 
 	fmt.Printf("Listener available on %v\n", app.api)
+	e.Listener = app.api
 
-	err := http.Serve(app.api, e.Server.Handler)
-
-	if err != nil {
-		fmt.Println("Error serving http server: ", err)
-		return err
-	}
-
-	return nil
+	return e.Start("")
 }

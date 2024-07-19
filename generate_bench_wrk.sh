@@ -10,14 +10,14 @@ export TOKEN=$(curl -s -X "POST" "http://localhost:12345/auth" \
     }' | jq -r .token)
 
 # 2. Load Test with wrk (Simplified)
-wrk -t12 -c400 -d30s \
+wrk -t200 -c200 -d30s \
     -H 'Accept: application/json' \
     -H 'Content-Type: application/json' \
     -H "Authorization: $TOKEN" \
     -s feedback_data.lua \
     http://localhost:12345/feedback
 
-wrk -t12 -c400 -d30s \
+wrk -t200 -c200 -d30s \
     -H 'Accept: application/json' \
     -H 'Content-Type: application/json' \
     -H "Authorization: $TOKEN" \
